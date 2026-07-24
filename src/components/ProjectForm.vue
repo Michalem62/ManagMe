@@ -21,12 +21,15 @@ function handleSubmit() {
 }
 </script>
 <template>
-  <form @submit.prevent="handleSubmit">
-    <label for="name">Name</label><br />
-    <input v-model="data.name" type="text" id="name" required /><br />
-    <label for="description">Description</label><br />
-    <textarea v-model="data.description" id="description" required></textarea><br />
-    <input v-if="route.name == 'edit_view'" type="submit" value="edit" />
-    <input v-else type="submit" value="add" />
-  </form>
+  <div>
+    <form @submit.prevent="handleSubmit">
+      <label for="name">Name</label><br />
+      <input v-model="data.name" type="text" id="name" required /><br />
+      <label for="description">Description</label><br />
+      <textarea v-model="data.description" id="description" required></textarea><br />
+      <input v-if="route.name == 'edit_view'" type="submit" value="edit" />
+      <input v-else type="submit" value="add" />
+    </form>
+  </div>
 </template>
+<style scoped></style>

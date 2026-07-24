@@ -7,17 +7,25 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: ProjectsView
+      component: ProjectsView,
     },
     {
       path: '/project-edit/:id',
       name: 'edit_view',
       component: () => import('@/views/EditView.vue'),
-      props: route => ({
-        id: Number(route.params.id)
-      })
-    }
-  ]
+      props: (route) => ({
+        id: Number(route.params.id),
+      }),
+    },
+    {
+      path: '/project-details/:id',
+      name: 'details_view',
+      component: () => import('@/views/Details.vue'),
+      props: (route) => ({
+        id: Number(route.params.id),
+      }),
+    },
+  ],
 })
 
 export default router

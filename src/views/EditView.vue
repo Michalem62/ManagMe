@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import ProjectForm from '@/components/ProjectForm.vue'
 import { useRouter } from 'vue-router'
-import { getProjectById, editProject } from '@/services/projectStorage'
+import { getProjectById, editProject } from '@/services/projectService'
 import type { ProjectFormData, Project } from '@/types/Project'
 
 const router = useRouter()
@@ -24,12 +24,14 @@ function handleEditProject(projectData: ProjectFormData) {
 }
 </script>
 <template>
-  <h1>Edit projects</h1>
-  <h2>Id produktu: {{ projectById?.id }}</h2>
-  <p>
-    <strong>Product name:</strong> {{ projectById?.name }} <strong>Product description:</strong>
-    {{ projectById?.description }}
-  </p>
-  <ProjectForm to="/" @submit="handleEditProject" />
-  <RouterLink to="/">Back to project list</RouterLink>
+  <main>
+    <h1>Edit projects</h1>
+    <h2>Project id: {{ projectById?.id }}</h2>
+    <p>
+      <strong>Product name:</strong> {{ projectById?.name }} <strong>Product description:</strong>
+      {{ projectById?.description }}
+    </p>
+    <ProjectForm to="/" @submit="handleEditProject" />
+    <RouterLink to="/">Back to project list</RouterLink>
+  </main>
 </template>

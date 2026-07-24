@@ -1,0 +1,22 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: grey;
+  border: 1px solid black;
+  height: 45px;
+  font-size: 15px;
+  text-decoration: none;
+  white-space: nowrap;
+  font-family: 'Times New Roman', Times, serif;
+  color: black;
+  width: fit-content;
+}
+
+.btn:hover {
+  background-color: lightgray;
+  cursor: pointer;
+}
+.list-card {
+  text-decoration: none;
+}
