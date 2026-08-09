@@ -18,6 +18,11 @@ const router = createRouter({
       }),
     },
     {
+      path: '/stories',
+      name: 'stories_view',
+      component: () => import('@/views/StoriesView.vue'),
+    },
+    {
       path: '/project-details/:id',
       name: 'details_view',
       component: () => import('@/views/Details.vue'),

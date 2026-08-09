@@ -1,48 +1,34 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { onMounted } from 'vue'
 import ProjectForm from '@/components/ProjectForm.vue'
 import ProjectList from '@/components/ProjectList.vue'
 import Header from '@/components/Header.vue'
 import type { ProjectFormData } from '@/types/Project'
-import {
-  addProject,
-  deleteProject,
-  refreshProjectsList,
-  refreshList,
-} from '@/services/projectService'
-import { useStoryStore } from '@/stores/storyStore'
 import { useProjectStore } from '@/stores/projectStore'
 
-const storiesStore = useStoryStore()
 const projectStore = useProjectStore()
 
-onMounted(() => {
-  refreshProjectsList()
+onMounted(async () => {
+  await projectStore.fetchProjects()
+  await projectStore.loadActiveProject()
 })
 
-function handleDeleteProject(id: number) {
-  deleteProject(id)
-  refreshProjectsList()
+async function handleDeleteProject(id: number) {
+  await projectStore.removeProject(id)
 }
 
-function handleAddProject(projectData: ProjectFormData) {
-  addProject(projectData)
-  refreshProjectsList()
+async function handleAddProject(projectData: ProjectFormData) {
+  await projectStore.addProject(projectData)
 }
 
-function handleActiveProject(id: number) {
-  projectStore.setActiveProject(id)
-  projectStore.loadActiveProject()
+async function handleActiveProject(id: number) {
+  await projectStore.setActiveProject(id)
 }
-
-// function handleAddStory(){
-//   storiesStore.addStory()
-// }
 </script>
 <template>
   <main>
-    <Header :projects="refreshList" @option="handleActiveProject" />
-    <a>Actual chosen project id: {{ projectStore.activeProjectId }}</a>
+    <Header :projects="projectStore.projects" @option="handleActiveProject" />
+    <a>Actual chosen project: {{ projectStore.activeProject?.name ?? 'brak' }}</a>
     <div class="container">
       <div class="form-element">
         <h1>Projects</h1>
@@ -50,7 +36,7 @@ function handleActiveProject(id: number) {
       </div>
     </div>
     <div class="project-list">
-      <ProjectList :projects="refreshList" @delete-project="handleDeleteProject" />
+      <ProjectList :projects="projectStore.projects" @delete-project="handleDeleteProject" />
     </div>
   </main>
 </template>
