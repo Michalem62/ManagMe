@@ -1,17 +1,10 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
 import ProjectForm from '@/components/ProjectForm.vue'
 import ProjectList from '@/components/ProjectList.vue'
-import Header from '@/components/Header.vue'
 import type { ProjectFormData } from '@/types/Project'
 import { useProjectStore } from '@/stores/projectStore'
 
 const projectStore = useProjectStore()
-
-onMounted(async () => {
-  await projectStore.fetchProjects()
-  await projectStore.loadActiveProject()
-})
 
 async function handleDeleteProject(id: number) {
   await projectStore.removeProject(id)
@@ -20,14 +13,9 @@ async function handleDeleteProject(id: number) {
 async function handleAddProject(projectData: ProjectFormData) {
   await projectStore.addProject(projectData)
 }
-
-async function handleActiveProject(id: number) {
-  await projectStore.setActiveProject(id)
-}
 </script>
 <template>
   <main>
-    <Header :projects="projectStore.projects" @option="handleActiveProject" />
     <a>Actual chosen project: {{ projectStore.activeProject?.name ?? 'brak' }}</a>
     <div class="container">
       <div class="form-element">
