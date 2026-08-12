@@ -4,6 +4,7 @@ import type { Stories, StoryFormData } from '@/types/Stories'
 import { storyApi } from '@/api'
 import { useProjectStore } from './projectStore'
 import { useUserStore } from './userStore'
+import { useTaskStore } from './taskStore'
 
 export const useStoryStore = defineStore('stories', () => {
   const projectStore = useProjectStore()
@@ -51,6 +52,8 @@ export const useStoryStore = defineStore('stories', () => {
   }
 
   async function removeStory(id: number): Promise<void> {
+    // taskStore woływany dopiero tutaj, a nie w setupie — inaczej import krążyłby w kółko
+    await useTaskStore().removeTasksOfStory(id)
     await storyApi.delete(id)
     await fetchStories()
   }
@@ -66,8 +69,10 @@ export const useStoryStore = defineStore('stories', () => {
   // Kasowanie sekwencyjne — równoległe usuwanie nadpisywałoby sobie zapisy w storage.
   async function removeStoriesOfProject(projectId: number): Promise<void> {
     const all = await storyApi.getAll()
+    const taskStore = useTaskStore()
 
     for (const story of all.filter((item) => item.projectId === projectId)) {
+      await taskStore.removeTasksOfStory(story.id)
       await storyApi.delete(story.id)
     }
 
