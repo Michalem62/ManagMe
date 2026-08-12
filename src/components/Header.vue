@@ -36,6 +36,7 @@ function handleChange(event: Event) {
     <nav>
       <RouterLink to="/">Projects</RouterLink>
       <RouterLink to="/stories">Stories</RouterLink>
+      <RouterLink to="/tasks">Tasks</RouterLink>
     </nav>
     <h3>User:</h3>
     <p>
