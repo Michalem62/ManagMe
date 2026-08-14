@@ -1,6 +1,7 @@
 import type { Project } from '@/types/Project'
 import type { Stories } from '@/types/Stories'
 import type { Task } from '@/types/Task'
+import type { Theme } from '@/types/Theme'
 import { LocalStorageApi } from './LocalStorageApi'
 import { StorageValue } from './StorageValue'
 
@@ -10,6 +11,7 @@ export const projectApi = new LocalStorageApi<Project>('projects')
 export const storyApi = new LocalStorageApi<Stories>('stories')
 export const taskApi = new LocalStorageApi<Task>('tasks')
 export const activeProjectStorage = new StorageValue<number>('activeProject')
+export const themeStorage = new StorageValue<Theme>('theme')
 
 export type { IApiClient } from './IApiClient'
 export { LocalStorageApi } from './LocalStorageApi'

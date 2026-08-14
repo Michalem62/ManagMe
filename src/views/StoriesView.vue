@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import Header from '@/components/Header.vue'
+import { ref, watch, onMounted } from 'vue'
 import StoryForm from '@/components/StoryForm.vue'
 import StoryColumn from '@/components/StoryColumn.vue'
 import { useProjectStore } from '@/stores/projectStore'
@@ -13,15 +12,17 @@ const storyStore = useStoryStore()
 const editedStory = ref<Stories | null>(null)
 
 onMounted(async () => {
-  await projectStore.fetchProjects()
-  await projectStore.loadActiveProject()
   await storyStore.fetchStories()
 })
 
-async function handleActiveProject(id: number) {
-  await projectStore.setActiveProject(id)
-  editedStory.value = null
-}
+// Wybór projektu przeniósł się do nagłówka, ale formularz nadal nie może zostać
+// z historyjką z poprzedniego projektu.
+watch(
+  () => projectStore.activeProjectId,
+  () => {
+    editedStory.value = null
+  },
+)
 
 async function handleSubmit(storyData: StoryFormData) {
   if (editedStory.value) {
@@ -44,8 +45,6 @@ async function handleChangeState(id: number, stan: Stories['stan']) {
 </script>
 <template>
   <main>
-    <Header :projects="projectStore.projects" @option="handleActiveProject" />
-
     <h1>Stories</h1>
 
     <p v-if="!projectStore.activeProject">Wybierz aktywny projekt, żeby zobaczyć historyjki.</p>

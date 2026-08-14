@@ -1,4 +1,9 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import AppHeader from '@/components/AppHeader.vue'
+</script>
 <template>
-  <RouterView />
+  <AppHeader />
+  <div class="container pb-4">
+    <RouterView />
+  </div>
 </template>

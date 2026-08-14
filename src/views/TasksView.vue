@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import Header from '@/components/Header.vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import TaskForm from '@/components/TaskForm.vue'
 import TaskColumn from '@/components/TaskColumn.vue'
 import { useProjectStore } from '@/stores/projectStore'
@@ -17,11 +16,19 @@ const editedTask = ref<Task | null>(null)
 const storyFilter = ref(0)
 
 onMounted(async () => {
-  await projectStore.fetchProjects()
-  await projectStore.loadActiveProject()
   await storyStore.fetchStories()
   await taskStore.fetchTasks()
 })
+
+// Wybór projektu przeniósł się do nagłówka. Filtr wskazuje historyjkę starego projektu,
+// a formularz mógł zostać w trybie edycji — jedno i drugie trzeba wyczyścić.
+watch(
+  () => projectStore.activeProjectId,
+  () => {
+    editedTask.value = null
+    storyFilter.value = 0
+  },
+)
 
 const visibleTasks = computed(() =>
   storyFilter.value === 0
@@ -32,12 +39,6 @@ const visibleTasks = computed(() =>
 const todo = computed(() => visibleTasks.value.filter((task) => task.stan === 'todo'))
 const doing = computed(() => visibleTasks.value.filter((task) => task.stan === 'doing'))
 const done = computed(() => visibleTasks.value.filter((task) => task.stan === 'done'))
-
-async function handleActiveProject(id: number) {
-  await projectStore.setActiveProject(id)
-  editedTask.value = null
-  storyFilter.value = 0
-}
 
 async function handleSubmit(taskData: TaskFormData) {
   if (editedTask.value) {
@@ -56,8 +57,6 @@ async function handleDelete(id: number) {
 </script>
 <template>
   <main>
-    <Header :projects="projectStore.projects" @option="handleActiveProject" />
-
     <h1>Tasks</h1>
 
     <p v-if="!projectStore.activeProject">Wybierz aktywny projekt, żeby zobaczyć zadania.</p>
