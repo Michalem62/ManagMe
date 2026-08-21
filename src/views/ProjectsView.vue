@@ -16,33 +16,15 @@ async function handleAddProject(projectData: ProjectFormData) {
 </script>
 <template>
   <main>
-    <a>Actual chosen project: {{ projectStore.activeProject?.name ?? 'brak' }}</a>
-    <div class="container">
-      <div class="form-element">
-        <h1>Projects</h1>
+    <h1 class="h3 mb-4">Projects</h1>
+
+    <div class="card mb-4">
+      <div class="card-header">New project</div>
+      <div class="card-body">
         <ProjectForm @submit="handleAddProject" />
       </div>
     </div>
-    <div class="project-list">
-      <ProjectList :projects="projectStore.projects" @delete-project="handleDeleteProject" />
-    </div>
+
+    <ProjectList :projects="projectStore.projects" @delete-project="handleDeleteProject" />
   </main>
 </template>
-<style scoped>
-.container {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  height: 200px;
-}
-
-.form-element {
-  border: 1px solid black;
-  padding: 10px;
-}
-.project-list {
-  display: flex;
-  align-items: start;
-  flex-direction: row;
-}
-</style>

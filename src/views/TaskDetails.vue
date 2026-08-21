@@ -3,6 +3,8 @@ import { ref, computed, onMounted } from 'vue'
 import { useStoryStore } from '@/stores/storyStore'
 import { useTaskStore } from '@/stores/taskStore'
 import { useUserStore } from '@/stores/userStore'
+import PriorityBadge from '@/components/PriorityBadge.vue'
+import StateBadge from '@/components/StateBadge.vue'
 
 const storyStore = useStoryStore()
 const taskStore = useTaskStore()
@@ -65,50 +67,94 @@ async function handleReopen() {
 </script>
 <template>
   <main>
-    <h1>Task details</h1>
+    <h1 class="h3 mb-4">Task details</h1>
 
-    <p v-if="isLoading">Ładowanie…</p>
-    <p v-else-if="!task">Nie znaleziono zadania o id {{ id }}.</p>
+    <p v-if="isLoading" class="text-body-secondary">Ładowanie…</p>
+    <div v-else-if="!task" class="alert alert-warning">Nie znaleziono zadania o id {{ id }}.</div>
 
     <template v-else>
-      <h2>{{ task.taskName }}</h2>
-      <p><strong>Description:</strong> {{ task.taskDescription }}</p>
-      <p><strong>Story:</strong> {{ story ? story.storyName : '—' }}</p>
-      <p><strong>Priority:</strong> {{ task.priority }}</p>
-      <p><strong>State:</strong> {{ task.stan }}</p>
-      <p><strong>Estimated:</strong> {{ task.estimatedHours }}h</p>
-      <p><strong>Worked hours:</strong> {{ worked === null ? '—' : `${worked}h` }}</p>
-      <p><strong>Created:</strong> {{ formatDate(task.createDate) }}</p>
-      <p><strong>Started:</strong> {{ formatDate(task.startDate) }}</p>
-      <p><strong>Finished:</strong> {{ formatDate(task.endDate) }}</p>
-      <p><strong>Assignee:</strong> {{ assignee ? userStore.fullName(assignee) : 'nobody' }}</p>
+      <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center gap-2">
+          <span class="fw-semibold">{{ task.taskName }}</span>
+          <span class="d-flex gap-2">
+            <PriorityBadge :priority="task.priority" />
+            <StateBadge :stan="task.stan" />
+          </span>
+        </div>
 
-      <label for="assignee">Assign person</label><br />
-      <select :value="task.assigneeId ?? 0" id="assignee" @change="handleAssign">
-        <option :value="0">nobody</option>
-        <option v-for="user in userStore.assignableUsers" :key="user.id" :value="user.id">
-          {{ userStore.fullName(user) }} ({{ user.role }})
-        </option>
-      </select>
-      <p class="hint">
-        Przypisanie osoby przenosi zadanie do „doing" i uzupełnia datę startu. Zdjęcie osoby
-        cofa je do „todo".
-      </p>
+        <div class="card-body">
+          <dl class="row mb-0">
+            <dt class="col-sm-3">Description</dt>
+            <dd class="col-sm-9">{{ task.taskDescription }}</dd>
 
-      <p v-if="task.stan === 'doing'">
-        <input type="button" value="Mark as done" @click="handleDone" />
-      </p>
-      <p v-else-if="task.stan === 'done'">
-        <input type="button" value="Reopen (back to doing)" @click="handleReopen" />
-      </p>
+            <dt class="col-sm-3">Story</dt>
+            <dd class="col-sm-9">{{ story ? story.storyName : '—' }}</dd>
+
+            <dt class="col-sm-3">Estimated</dt>
+            <dd class="col-sm-9">{{ task.estimatedHours }}h</dd>
+
+            <dt class="col-sm-3">Worked hours</dt>
+            <dd class="col-sm-9">{{ worked === null ? '—' : `${worked}h` }}</dd>
+
+            <dt class="col-sm-3">Created</dt>
+            <dd class="col-sm-9">{{ formatDate(task.createDate) }}</dd>
+
+            <dt class="col-sm-3">Started</dt>
+            <dd class="col-sm-9">{{ formatDate(task.startDate) }}</dd>
+
+            <dt class="col-sm-3">Finished</dt>
+            <dd class="col-sm-9">{{ formatDate(task.endDate) }}</dd>
+
+            <dt class="col-sm-3">Assignee</dt>
+            <dd class="col-sm-9 mb-0">
+              {{ assignee ? userStore.fullName(assignee) : 'nobody' }}
+            </dd>
+          </dl>
+        </div>
+      </div>
+
+      <div class="card mb-4">
+        <div class="card-header">Actions</div>
+        <div class="card-body">
+          <div class="mb-3">
+            <label class="form-label" for="assignee">Assign person</label>
+            <select
+              :value="task.assigneeId ?? 0"
+              id="assignee"
+              class="form-select"
+              @change="handleAssign"
+            >
+              <option :value="0">nobody</option>
+              <option v-for="user in userStore.assignableUsers" :key="user.id" :value="user.id">
+                {{ userStore.fullName(user) }} ({{ user.role }})
+              </option>
+            </select>
+            <div class="form-text">
+              Przypisanie osoby przenosi zadanie do „doing" i uzupełnia datę startu. Zdjęcie osoby
+              cofa je do „todo".
+            </div>
+          </div>
+
+          <button
+            v-if="task.stan === 'doing'"
+            type="button"
+            class="btn btn-success"
+            @click="handleDone"
+          >
+            Mark as done
+          </button>
+          <button
+            v-else-if="task.stan === 'done'"
+            type="button"
+            class="btn btn-outline-primary"
+            @click="handleReopen"
+          >
+            Reopen (back to doing)
+          </button>
+        </div>
+      </div>
     </template>
 
-    <RouterLink to="/tasks">Back to tasks</RouterLink>
+    <RouterLink to="/tasks" class="btn btn-outline-secondary">Back to tasks</RouterLink>
   </main>
 </template>
-<style scoped>
-.hint {
-  font-size: 0.85em;
-  color: #555;
-}
-</style>
