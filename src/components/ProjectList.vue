@@ -12,17 +12,16 @@ const emit = defineEmits<{
 }>()
 </script>
 <template>
-  <div class="container">
-    <h3>Projects list</h3>
-    <p v-if="projects.length === 0">No projects to show</p>
-    <ul v-else>
+  <div>
+    <h3 class="h5 mb-3">Projects list</h3>
+    <div v-if="projects.length === 0" class="alert alert-info">No projects to show</div>
+    <div v-else class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3">
       <ProjectCard
         v-for="project in projects"
         :key="project.id"
         :project="project"
         @delete-project="emit('delete-project', $event)"
       />
-    </ul>
+    </div>
   </div>
 </template>
-<style scoped></style>

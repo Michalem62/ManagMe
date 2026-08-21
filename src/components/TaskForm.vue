@@ -55,41 +55,84 @@ function handleSubmit() {
 }
 </script>
 <template>
-  <form @submit.prevent="handleSubmit">
-    <h3>{{ props.task ? 'Edit task' : 'New task' }}</h3>
+  <div class="card mb-4">
+    <div class="card-header">{{ props.task ? 'Edit task' : 'New task' }}</div>
+    <div class="card-body">
+      <form @submit.prevent="handleSubmit">
+        <div class="row g-3">
+          <div class="col-md-8">
+            <label class="form-label" for="taskName">Name</label>
+            <input
+              v-model="data.taskName"
+              type="text"
+              id="taskName"
+              class="form-control"
+              required
+            />
+          </div>
 
-    <label for="taskName">Name</label><br />
-    <input v-model="data.taskName" type="text" id="taskName" required /><br />
+          <div class="col-md-4">
+            <label class="form-label" for="taskPriority">Priority</label>
+            <select v-model="data.priority" id="taskPriority" class="form-select">
+              <option value="low">low</option>
+              <option value="medium">medium</option>
+              <option value="high">high</option>
+            </select>
+          </div>
 
-    <label for="taskDescription">Description</label><br />
-    <textarea v-model="data.taskDescription" id="taskDescription" required></textarea><br />
+          <div class="col-12">
+            <label class="form-label" for="taskDescription">Description</label>
+            <textarea
+              v-model="data.taskDescription"
+              id="taskDescription"
+              class="form-control"
+              rows="2"
+              required
+            ></textarea>
+          </div>
 
-    <label for="taskStory">Story</label><br />
-    <select v-model.number="data.storyId" id="taskStory">
-      <option v-if="data.storyId === 0" :value="0" disabled>Choose a story</option>
-      <option v-for="story in storyStore.storiesByProject" :key="story.id" :value="story.id">
-        {{ story.storyName }}
-      </option></select
-    ><br />
+          <div class="col-md-8">
+            <label class="form-label" for="taskStory">Story</label>
+            <select v-model.number="data.storyId" id="taskStory" class="form-select">
+              <option v-if="data.storyId === 0" :value="0" disabled>Choose a story</option>
+              <option
+                v-for="story in storyStore.storiesByProject"
+                :key="story.id"
+                :value="story.id"
+              >
+                {{ story.storyName }}
+              </option>
+            </select>
+          </div>
 
-    <label for="taskPriority">Priority</label><br />
-    <select v-model="data.priority" id="taskPriority">
-      <option value="low">low</option>
-      <option value="medium">medium</option>
-      <option value="high">high</option></select
-    ><br />
+          <div class="col-md-4">
+            <label class="form-label" for="estimatedHours">Estimated hours</label>
+            <input
+              v-model.number="data.estimatedHours"
+              type="number"
+              id="estimatedHours"
+              class="form-control"
+              min="0"
+              step="0.5"
+              required
+            />
+          </div>
 
-    <label for="estimatedHours">Estimated hours</label><br />
-    <input
-      v-model.number="data.estimatedHours"
-      type="number"
-      id="estimatedHours"
-      min="0"
-      step="0.5"
-      required
-    /><br />
-
-    <input type="submit" :value="props.task ? 'save' : 'add'" />
-    <input v-if="props.task" type="button" value="cancel" @click="emit('cancel')" />
-  </form>
+          <div class="col-12 d-flex gap-2">
+            <button type="submit" class="btn btn-primary">
+              {{ props.task ? 'Save' : 'Add' }}
+            </button>
+            <button
+              v-if="props.task"
+              type="button"
+              class="btn btn-outline-secondary"
+              @click="emit('cancel')"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
 </template>

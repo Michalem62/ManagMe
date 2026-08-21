@@ -35,17 +35,26 @@ async function handleEditProject(projectData: ProjectFormData) {
 </script>
 <template>
   <main>
-    <h1>Edit projects</h1>
-    <p v-if="isLoading">Ładowanie…</p>
-    <p v-else-if="!project">Nie znaleziono projektu o id {{ id }}.</p>
+    <h1 class="h3 mb-4">Edit project</h1>
+
+    <p v-if="isLoading" class="text-body-secondary">Ładowanie…</p>
+    <div v-else-if="!project" class="alert alert-warning">
+      Nie znaleziono projektu o id {{ id }}.
+    </div>
+
     <template v-else>
-      <h2>Project id: {{ project.id }}</h2>
-      <p>
-        <strong>Product name:</strong> {{ project.name }} <strong>Product description:</strong>
-        {{ project.description }}
-      </p>
-      <ProjectForm :project="project" @submit="handleEditProject" />
+      <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <span class="fw-semibold">{{ project.name }}</span>
+          <span class="badge text-bg-secondary">id: {{ project.id }}</span>
+        </div>
+        <div class="card-body">
+          <p class="text-body-secondary">{{ project.description }}</p>
+          <ProjectForm :project="project" @submit="handleEditProject" />
+        </div>
+      </div>
     </template>
-    <RouterLink to="/">Back to project list</RouterLink>
+
+    <RouterLink to="/" class="btn btn-outline-secondary">Back to project list</RouterLink>
   </main>
 </template>

@@ -10,38 +10,33 @@ const emit = defineEmits<{
 }>()
 </script>
 <template>
-  <li class="list-card">
-    <strong>Project name: </strong>{{ project.name }}
-    <p>Description: <br />{{ project.description }}</p>
-    <RouterLink :to="{ name: 'edit_view', params: { id: project.id } }" class="btn"
-      >Edit</RouterLink
-    >
-    <input type="button" @click="emit('delete-project', project.id)" class="btn" value="Delete"></input>
-    <RouterLink :to="{ name: 'details_view', params: { id: project.id } }" class="btn"
-      >Details</RouterLink
-    >
-  </li>
+  <div class="col">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="card-title">{{ project.name }}</h5>
+        <p class="card-text text-body-secondary">{{ project.description }}</p>
+      </div>
+      <div class="card-footer d-flex gap-2">
+        <RouterLink
+          :to="{ name: 'edit_view', params: { id: project.id } }"
+          class="btn btn-sm btn-outline-primary"
+        >
+          Edit
+        </RouterLink>
+        <RouterLink
+          :to="{ name: 'details_view', params: { id: project.id } }"
+          class="btn btn-sm btn-outline-secondary"
+        >
+          Details
+        </RouterLink>
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-danger ms-auto"
+          @click="emit('delete-project', project.id)"
+        >
+          Delete
+        </button>
+      </div>
+    </div>
+  </div>
 </template>
-<style scoped>
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background-color: grey;
-  border: 1px solid black;
-  width: 60px;
-  height: 45px;
-  font-size: 15px;
-  text-decoration: none;
-  font-family: 'Times New Roman', Times, serif;
-  color: black;
-}
-
-.btn:hover {
-  background-color: lightgray;
-  cursor: pointer;
-}
-.list-card {
-  text-decoration: none;
-}
-</style>

@@ -57,29 +57,33 @@ async function handleDelete(id: number) {
 </script>
 <template>
   <main>
-    <h1>Tasks</h1>
+    <h1 class="h3 mb-1">Tasks</h1>
 
-    <p v-if="!projectStore.activeProject">Wybierz aktywny projekt, żeby zobaczyć zadania.</p>
+    <div v-if="!projectStore.activeProject" class="alert alert-warning">
+      Wybierz aktywny projekt, żeby zobaczyć zadania.
+    </div>
 
     <template v-else>
-      <p>Project: {{ projectStore.activeProject.name }}</p>
+      <p class="text-body-secondary mb-4">Project: {{ projectStore.activeProject.name }}</p>
 
-      <p v-if="storyStore.storiesByProject.length === 0">
+      <div v-if="storyStore.storiesByProject.length === 0" class="alert alert-info">
         Ten projekt nie ma jeszcze historyjek — zadanie musi należeć do historyjki.
-      </p>
+      </div>
 
       <template v-else>
         <TaskForm :task="editedTask" @submit="handleSubmit" @cancel="editedTask = null" />
 
-        <label for="storyFilter">Story:</label>
-        <select v-model.number="storyFilter" id="storyFilter">
-          <option :value="0">all</option>
-          <option v-for="story in storyStore.storiesByProject" :key="story.id" :value="story.id">
-            {{ story.storyName }}
-          </option>
-        </select>
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <label class="form-label mb-0" for="storyFilter">Story:</label>
+          <select v-model.number="storyFilter" id="storyFilter" class="form-select w-auto">
+            <option :value="0">all</option>
+            <option v-for="story in storyStore.storiesByProject" :key="story.id" :value="story.id">
+              {{ story.storyName }}
+            </option>
+          </select>
+        </div>
 
-        <div class="columns">
+        <div class="row row-cols-1 row-cols-lg-3 g-3">
           <TaskColumn
             title="Todo"
             :tasks="todo"
@@ -102,13 +106,6 @@ async function handleDelete(id: number) {
       </template>
     </template>
 
-    <RouterLink to="/stories">Back to stories</RouterLink>
+    <RouterLink to="/stories" class="btn btn-outline-secondary mt-4">Back to stories</RouterLink>
   </main>
 </template>
-<style scoped>
-.columns {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-}
-</style>

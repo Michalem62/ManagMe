@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Stories } from '@/types/Stories'
+import PriorityBadge from './PriorityBadge.vue'
 
 const props = defineProps<{
   story: Stories
@@ -16,27 +17,40 @@ function handleStateChange(event: Event) {
 }
 </script>
 <template>
-  <li class="story-card">
-    <strong>{{ story.storyName }}</strong>
-    <p>{{ story.storyDescription }}</p>
-    <p>Priority: {{ story.priority }}</p>
-    <p>Created: {{ new Date(story.createDate).toLocaleString() }}</p>
+  <li class="card">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-start gap-2">
+        <h6 class="card-title mb-0">{{ story.storyName }}</h6>
+        <PriorityBadge :priority="story.priority" />
+      </div>
 
-    <select :value="story.stan" @change="handleStateChange">
-      <option value="todo">todo</option>
-      <option value="doing">doing</option>
-      <option value="done">done</option>
-    </select>
+      <p class="card-text small mt-2">{{ story.storyDescription }}</p>
+      <p class="card-text text-body-secondary small">
+        Created: {{ new Date(story.createDate).toLocaleString() }}
+      </p>
 
-    <input type="button" value="Edit" @click="emit('edit', story)" />
-    <input type="button" value="Delete" @click="emit('delete-story', story.id)" />
+      <select
+        class="form-select form-select-sm mb-2"
+        :value="story.stan"
+        @change="handleStateChange"
+      >
+        <option value="todo">todo</option>
+        <option value="doing">doing</option>
+        <option value="done">done</option>
+      </select>
+
+      <div class="d-flex gap-2">
+        <button type="button" class="btn btn-sm btn-outline-primary" @click="emit('edit', story)">
+          Edit
+        </button>
+        <button
+          type="button"
+          class="btn btn-sm btn-outline-danger"
+          @click="emit('delete-story', story.id)"
+        >
+          Delete
+        </button>
+      </div>
+    </div>
   </li>
 </template>
-<style scoped>
-.story-card {
-  border: 1px solid black;
-  padding: 5px;
-  margin-bottom: 5px;
-  list-style: none;
-}
-</style>

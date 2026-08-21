@@ -37,15 +37,25 @@ function handleSubmit() {
 }
 </script>
 <template>
-  <div>
-    <form @submit.prevent="handleSubmit">
-      <label for="name">Name</label><br />
-      <input v-model="data.name" type="text" id="name" required /><br />
-      <label for="description">Description</label><br />
-      <textarea v-model="data.description" id="description" required></textarea><br />
-      <input v-if="route.name == 'edit_view'" type="submit" value="edit" />
-      <input v-else type="submit" value="add" />
-    </form>
-  </div>
+  <form @submit.prevent="handleSubmit">
+    <div class="mb-3">
+      <label class="form-label" for="name">Name</label>
+      <input v-model="data.name" type="text" id="name" class="form-control" required />
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label" for="description">Description</label>
+      <textarea
+        v-model="data.description"
+        id="description"
+        class="form-control"
+        rows="3"
+        required
+      ></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+      {{ route.name == 'edit_view' ? 'Save' : 'Add' }}
+    </button>
+  </form>
 </template>
-<style scoped></style>

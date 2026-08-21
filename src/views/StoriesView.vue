@@ -45,16 +45,18 @@ async function handleChangeState(id: number, stan: Stories['stan']) {
 </script>
 <template>
   <main>
-    <h1>Stories</h1>
+    <h1 class="h3 mb-1">Stories</h1>
 
-    <p v-if="!projectStore.activeProject">Wybierz aktywny projekt, żeby zobaczyć historyjki.</p>
+    <div v-if="!projectStore.activeProject" class="alert alert-warning">
+      Wybierz aktywny projekt, żeby zobaczyć historyjki.
+    </div>
 
     <template v-else>
-      <p>Project: {{ projectStore.activeProject.name }}</p>
+      <p class="text-body-secondary mb-4">Project: {{ projectStore.activeProject.name }}</p>
 
       <StoryForm :story="editedStory" @submit="handleSubmit" @cancel="editedStory = null" />
 
-      <div class="columns">
+      <div class="row row-cols-1 row-cols-lg-3 g-3">
         <StoryColumn
           title="Todo"
           :stories="storyStore.todo"
@@ -79,13 +81,6 @@ async function handleChangeState(id: number, stan: Stories['stan']) {
       </div>
     </template>
 
-    <RouterLink to="/">Back to project list</RouterLink>
+    <RouterLink to="/" class="btn btn-outline-secondary mt-4">Back to project list</RouterLink>
   </main>
 </template>
-<style scoped>
-.columns {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-}
-</style>
