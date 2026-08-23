@@ -43,6 +43,19 @@ const router = createRouter({
         id: Number(route.params.id),
       }),
     },
+    {
+      path: '/notifications',
+      name: 'notifications_view',
+      component: () => import('@/views/NotificationsView.vue'),
+    },
+    {
+      path: '/notification-details/:id',
+      name: 'notification_details_view',
+      component: () => import('@/views/NotificationDetails.vue'),
+      props: (route) => ({
+        id: Number(route.params.id),
+      }),
+    },
   ],
 })
 

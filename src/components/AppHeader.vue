@@ -2,16 +2,21 @@
 import { onMounted } from 'vue'
 import { useUserStore } from '@/stores/userStore'
 import { useProjectStore } from '@/stores/projectStore'
+import { useNotificationStore } from '@/stores/notificationStore'
 import ThemeToggle from './ThemeToggle.vue'
+import NotificationCounter from './NotificationCounter.vue'
 
 const userStore = useUserStore()
 const projectStore = useProjectStore()
+const notificationStore = useNotificationStore()
 
 // Nagłówek siedzi w app shellu, więc to on ładuje listę projektów i przywraca aktywny.
-// Widoki nie powtarzają już tego u siebie.
+// Widoki nie powtarzają już tego u siebie. Powiadomienia dochodzą tu z tego samego powodu —
+// licznik musi znać stan od pierwszej klatki.
 onMounted(async () => {
   await projectStore.fetchProjects()
   await projectStore.loadActiveProject()
+  await notificationStore.fetchNotifications()
 })
 
 async function handleChange(event: Event) {
@@ -35,6 +40,11 @@ async function handleChange(event: Event) {
         <li class="nav-item">
           <RouterLink class="nav-link" exact-active-class="active" to="/tasks">Tasks</RouterLink>
         </li>
+        <li class="nav-item">
+          <RouterLink class="nav-link" exact-active-class="active" to="/notifications">
+            Notifications
+          </RouterLink>
+        </li>
       </ul>
 
       <div class="d-flex align-items-center gap-2">
@@ -57,6 +67,7 @@ async function handleChange(event: Event) {
       <div class="d-flex align-items-center gap-2 ms-auto">
         <span class="small">{{ userStore.fullName(userStore.currentUser) }}</span>
         <span class="badge text-bg-secondary">{{ userStore.currentUser.role }}</span>
+        <NotificationCounter />
         <ThemeToggle />
       </div>
     </div>

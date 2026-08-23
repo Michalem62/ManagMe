@@ -1,8 +1,11 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import type { Task, TaskFormData } from '@/types/Task'
+import type { NotificationDraft } from '@/types/Notification'
 import { taskApi } from '@/api'
 import { useStoryStore } from './storyStore'
+import { useNotificationStore } from './notificationStore'
+import { useUserStore } from './userStore'
 
 export const useTaskStore = defineStore('tasks', () => {
   const storyStore = useStoryStore()
@@ -38,6 +41,12 @@ export const useTaskStore = defineStore('tasks', () => {
 
     // Nowe zadanie w zamkniętej historyjce znaczy, że nie jest już zamknięta.
     await reopenStoryIfDone(taskData.storyId)
+
+    await notifyStoryOwner(taskData.storyId, {
+      title: 'Nowe zadanie',
+      message: `Zadanie „${taskData.taskName}" dodane do historyjki „${storyName(taskData.storyId)}".`,
+      priority: 'medium',
+    })
   }
 
   async function editTask(task: Task): Promise<void> {
@@ -60,8 +69,16 @@ export const useTaskStore = defineStore('tasks', () => {
     await taskApi.delete(id)
     await fetchTasks()
 
+    if (!task) return
+
     // Usunięcie ostatniego niezamkniętego zadania może domknąć historyjkę.
-    if (task) await closeStoryIfAllTasksDone(task.storyId)
+    await closeStoryIfAllTasksDone(task.storyId)
+
+    await notifyStoryOwner(task.storyId, {
+      title: 'Usunięto zadanie',
+      message: `Zadanie „${task.taskName}" usunięte z historyjki „${storyName(task.storyId)}".`,
+      priority: 'medium',
+    })
   }
 
   // Przypisanie osoby: todo → doing wraz z datą startu (wymaganie wprost).
@@ -80,6 +97,28 @@ export const useTaskStore = defineStore('tasks', () => {
     })
 
     if (wasTodo) await startStoryIfTodo(task.storyId)
+
+    const user = useUserStore().getUserById(userId)
+    const notificationStore = useNotificationStore()
+
+    await notificationStore.send({
+      title: 'Przypisano Cię do zadania',
+      message: `Zadanie „${task.taskName}" w historyjce „${storyName(task.storyId)}" czeka na Ciebie.`,
+      priority: 'high',
+      recipientId: userId,
+    })
+
+    // Kopia do właściciela historyjki — bez niej przypisanie byłoby niewidoczne dla nikogo
+    // poza wykonawcą. Przy przypisaniu do samego siebie wystarczy jedno powiadomienie.
+    await notifyStoryOwner(
+      task.storyId,
+      {
+        title: 'Przypisano osobę do zadania',
+        message: `${user ? useUserStore().fullName(user) : 'Ktoś'} został przypisany do zadania „${task.taskName}".`,
+        priority: 'high',
+      },
+      userId,
+    )
   }
 
   // Odpięcie osoby cofa zadanie do todo — stan doing wymaga przypisanego użytkownika.
@@ -114,11 +153,23 @@ export const useTaskStore = defineStore('tasks', () => {
       await editTask({ ...task, stan, startDate: task.startDate ?? now, endDate: null })
       await reopenStoryIfDone(task.storyId)
       await startStoryIfTodo(task.storyId)
+
+      await notifyStoryOwner(task.storyId, {
+        title: 'Zadanie w toku',
+        message: `Zadanie „${task.taskName}" w historyjce „${storyName(task.storyId)}" jest realizowane.`,
+        priority: 'low',
+      })
       return
     }
 
     await editTask({ ...task, stan, startDate: task.startDate ?? now, endDate: now })
     await closeStoryIfAllTasksDone(task.storyId)
+
+    await notifyStoryOwner(task.storyId, {
+      title: 'Zadanie zakończone',
+      message: `Zadanie „${task.taskName}" w historyjce „${storyName(task.storyId)}" zostało zakończone.`,
+      priority: 'medium',
+    })
   }
 
   // Kasowanie sekwencyjne — równoległe usuwanie nadpisywałoby sobie zapisy w storage.
@@ -144,6 +195,24 @@ export const useTaskStore = defineStore('tasks', () => {
     const hours = (end.getTime() - new Date(task.startDate).getTime()) / 3_600_000
 
     return Math.round(hours * 10) / 10
+  }
+
+  function storyName(storyId: number): string {
+    return storyStore.stories.find((item) => item.id === storyId)?.storyName ?? '—'
+  }
+
+  // Cztery z pięciu powiadomień idą do właściciela historyjki, więc adresowanie siedzi
+  // w jednym miejscu. notificationStore wołany dopiero tutaj — kierunek importów.
+  async function notifyStoryOwner(
+    storyId: number,
+    draft: Omit<NotificationDraft, 'recipientId'>,
+    skipIfOwnerIs?: number,
+  ): Promise<void> {
+    const story = storyStore.stories.find((item) => item.id === storyId)
+
+    if (!story || story.ownerId === skipIfOwnerIs) return
+
+    await useNotificationStore().send({ ...draft, recipientId: story.ownerId })
   }
 
   async function startStoryIfTodo(storyId: number): Promise<void> {

@@ -3,6 +3,8 @@ import { ref, computed } from 'vue'
 import type { Project, ProjectFormData } from '@/types/Project'
 import { projectApi, activeProjectStorage } from '@/api'
 import { useStoryStore } from './storyStore'
+import { useNotificationStore } from './notificationStore'
+import { useUserStore } from './userStore'
 
 export const useProjectStore = defineStore('projects', () => {
   const projects = ref<Project[]>([])
@@ -23,6 +25,20 @@ export const useProjectStore = defineStore('projects', () => {
   async function addProject(projectData: ProjectFormData): Promise<void> {
     await projectApi.create(projectData)
     await fetchProjects()
+
+    // Wymaganie mówi „otrzymuje każdy admin", więc lecimy po wszystkich adminach —
+    // dziś to jedna osoba, ale pętla nie kłamie o intencji.
+    const notificationStore = useNotificationStore()
+    const admins = useUserStore().users.filter((user) => user.role === 'admin')
+
+    for (const admin of admins) {
+      await notificationStore.send({
+        title: 'Nowy projekt',
+        message: `Utworzono projekt „${projectData.name}".`,
+        priority: 'high',
+        recipientId: admin.id,
+      })
+    }
   }
 
   async function editProject(project: Project): Promise<void> {

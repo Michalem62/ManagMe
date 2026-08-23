@@ -1,3 +1,4 @@
+import type { Notification } from '@/types/Notification'
 import type { Project } from '@/types/Project'
 import type { Stories } from '@/types/Stories'
 import type { Task } from '@/types/Task'
@@ -10,6 +11,7 @@ import { StorageValue } from './StorageValue'
 export const projectApi = new LocalStorageApi<Project>('projects')
 export const storyApi = new LocalStorageApi<Stories>('stories')
 export const taskApi = new LocalStorageApi<Task>('tasks')
+export const notificationApi = new LocalStorageApi<Notification>('notifications')
 export const activeProjectStorage = new StorageValue<number>('activeProject')
 export const themeStorage = new StorageValue<Theme>('theme')
 
