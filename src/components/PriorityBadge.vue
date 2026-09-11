@@ -6,8 +6,6 @@ const props = defineProps<{
   priority: Stories['priority']
 }>()
 
-// Jedyne miejsce z mapowaniem priorytetu na kolor — inaczej rozjechałoby się
-// po kartach historyjek, zadań i widoku szczegółów.
 const variant = computed(
   () =>
     ({

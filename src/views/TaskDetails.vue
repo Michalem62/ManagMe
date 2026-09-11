@@ -22,8 +22,6 @@ onMounted(async () => {
   isLoading.value = false
 })
 
-// Czytamy ze store'a, a nie z lokalnego ref — dzięki temu widok odświeża się sam
-// po przypisaniu osoby czy zmianie stanu.
 const task = computed(() => taskStore.tasks.find((item) => item.id === props.id) ?? null)
 
 const story = computed(() =>

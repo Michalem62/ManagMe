@@ -6,8 +6,6 @@ import PriorityBadge from './PriorityBadge.vue'
 const router = useRouter()
 const notificationStore = useNotificationStore()
 
-// Klasy .toast z Bootstrapa, ale cyklem życia steruje Vue — wpuszczenie tu JS biblioteki
-// dałoby dwóch właścicieli tego samego DOM-u i duchy po zamkniętych toastach.
 function openDetails(id: number) {
   notificationStore.dismissToast(id)
   router.push(`/notification-details/${id}`)

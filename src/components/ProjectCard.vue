@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { Project } from '@/types/Project'
-//tutaj poprosiłem rodzica(ProjectList) aby podał mi dane do pól z interfejsu(typu) Project
 defineProps<{
   project: Project
 }>()

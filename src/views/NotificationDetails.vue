@@ -11,7 +11,6 @@ const props = defineProps<{
 
 const isLoading = ref(true)
 
-// Wejście na szczegóły oznacza powiadomienie jako przeczytane — wymaganie wprost.
 onMounted(async () => {
   await notificationStore.fetchNotifications()
   await notificationStore.markAsRead(props.id)

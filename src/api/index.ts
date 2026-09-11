@@ -6,8 +6,6 @@ import type { Theme } from '@/types/Theme'
 import { LocalStorageApi } from './LocalStorageApi'
 import { StorageValue } from './StorageValue'
 
-// Jedyne miejsce w aplikacji, które decyduje o tym, gdzie trafiają dane.
-// Podmiana backendu = podmiana tych instancji.
 export const projectApi = new LocalStorageApi<Project>('projects')
 export const storyApi = new LocalStorageApi<Stories>('stories')
 export const taskApi = new LocalStorageApi<Task>('tasks')

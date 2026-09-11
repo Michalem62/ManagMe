@@ -5,7 +5,6 @@ import { useStoryStore } from '@/stores/storyStore'
 
 const storyStore = useStoryStore()
 
-// Brak propa task = tryb dodawania, prop task = tryb edycji.
 const props = defineProps<{
   task?: Task | null
 }>()
@@ -20,8 +19,6 @@ function emptyForm(): TaskFormData {
     taskName: '',
     taskDescription: '',
     priority: 'medium',
-    // Pierwsza historyjka projektu jako domyślna — formularz i tak pokazuje się dopiero,
-    // gdy jakaś istnieje. 0 to wariant awaryjny, odsiewany przy submicie.
     storyId: storyStore.storiesByProject[0]?.id ?? 0,
     estimatedHours: 1,
   }
@@ -46,7 +43,6 @@ watch(
 )
 
 function handleSubmit() {
-  // Atrybut required nie zadziała na selekcie, którego wartością jest liczba 0.
   if (data.value.storyId === 0) return
 
   emit('submit', { ...data.value })

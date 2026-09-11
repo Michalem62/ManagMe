@@ -1,5 +1,3 @@
-// Pojedyncza wartość w storage (np. id aktywnego projektu) — to nie jest kolekcja encji,
-// więc nie pasuje do IApiClient i dostaje własną, prostszą klasę.
 export class StorageValue<T> {
   constructor(private readonly storageKey: string) {}
 

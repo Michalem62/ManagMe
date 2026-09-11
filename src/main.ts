@@ -13,7 +13,6 @@ const app = createApp(App)
 app.use(createPinia())
 app.use(router)
 
-// Motyw wczytujemy przed mount, żeby pierwsza klatka nie mignęła jasnym tłem
 await useThemeStore().init()
 
 app.mount('#app')

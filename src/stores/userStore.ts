@@ -7,7 +7,6 @@ export const useUserStore = defineStore('user', () => {
   const users = ref<User[]>(mockUsers)
   const currentUser = ref<User>(loggedUser)
 
-  // Zadania mogą wykonywać wyłącznie devops i developer — admin zarządza.
   const assignableUsers = computed(() =>
     users.value.filter((user) => user.role === 'devops' || user.role === 'developer'),
   )

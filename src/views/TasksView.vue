@@ -12,7 +12,6 @@ const storyStore = useStoryStore()
 const taskStore = useTaskStore()
 
 const editedTask = ref<Task | null>(null)
-// 0 = bez filtra, pokazujemy zadania wszystkich historyjek projektu
 const storyFilter = ref(0)
 
 onMounted(async () => {
@@ -20,8 +19,6 @@ onMounted(async () => {
   await taskStore.fetchTasks()
 })
 
-// Wybór projektu przeniósł się do nagłówka. Filtr wskazuje historyjkę starego projektu,
-// a formularz mógł zostać w trybie edycji — jedno i drugie trzeba wyczyścić.
 watch(
   () => projectStore.activeProjectId,
   () => {

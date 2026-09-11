@@ -15,8 +15,6 @@ onMounted(async () => {
   await storyStore.fetchStories()
 })
 
-// Wybór projektu przeniósł się do nagłówka, ale formularz nadal nie może zostać
-// z historyjką z poprzedniego projektu.
 watch(
   () => projectStore.activeProjectId,
   () => {
