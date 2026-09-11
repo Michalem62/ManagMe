@@ -12,7 +12,6 @@ export const useStoryStore = defineStore('stories', () => {
 
   const stories = ref<Stories[]>([])
 
-  // Wszystko, co widać w aplikacji, dotyczy wyłącznie aktywnego projektu.
   const storiesByProject = computed(() =>
     projectStore.activeProjectId === null
       ? []
@@ -66,7 +65,6 @@ export const useStoryStore = defineStore('stories', () => {
     await editStory({ ...story, stan })
   }
 
-  // Kasowanie sekwencyjne — równoległe usuwanie nadpisywałoby sobie zapisy w storage.
   async function removeStoriesOfProject(projectId: number): Promise<void> {
     const all = await storyApi.getAll()
     const taskStore = useTaskStore()

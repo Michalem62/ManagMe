@@ -1,7 +1,5 @@
 import type { IApiClient } from './IApiClient'
 
-// Generyczna implementacja CRUD na localStorage. Nie zna Vue ani żadnej encji z osobna —
-// jedyne czego wymaga od typu T to obecność pola id.
 export class LocalStorageApi<T extends { id: number }> implements IApiClient<T> {
   private readonly nextIdKey: string
 
@@ -57,8 +55,6 @@ export class LocalStorageApi<T extends { id: number }> implements IApiClient<T> 
     localStorage.setItem(this.storageKey, JSON.stringify(items))
   }
 
-  // Licznik trzymany osobno od listy, żeby id usuniętych elementów nigdy się nie powtórzyło.
-  // Porównanie z największym istniejącym id chroni przed rozjechaniem się licznika.
   private getNextId(items: T[]): number {
     const storedId = Number(localStorage.getItem(this.nextIdKey)) || 0
     const maxId = items.reduce((max, item) => Math.max(max, item.id), 0)

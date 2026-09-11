@@ -12,7 +12,7 @@ export const useTaskStore = defineStore('tasks', () => {
 
   const tasks = ref<Task[]>([])
 
-  // Zadanie należy do projektu przez historyjkę — filtrujemy po historyjkach aktywnego projektu.
+  // Zadanie należy do projektu przez historyjkę — filtruje po historyjkach aktywnego projektu.
   const tasksByProject = computed(() => {
     const storyIds = new Set(storyStore.storiesByProject.map((story) => story.id))
 
@@ -50,8 +50,6 @@ export const useTaskStore = defineStore('tasks', () => {
   }
 
   async function editTask(task: Task): Promise<void> {
-    // Edycja może przenieść zadanie do innej historyjki — obie trzeba wtedy przeliczyć.
-    // Wywołania wewnętrzne (przypisanie osoby, zmiana stanu) nigdy nie ruszają storyId.
     const previousStoryId = tasks.value.find((item) => item.id === task.id)?.storyId
 
     await taskApi.update(task)
@@ -71,7 +69,6 @@ export const useTaskStore = defineStore('tasks', () => {
 
     if (!task) return
 
-    // Usunięcie ostatniego niezamkniętego zadania może domknąć historyjkę.
     await closeStoryIfAllTasksDone(task.storyId)
 
     await notifyStoryOwner(task.storyId, {
@@ -81,7 +78,6 @@ export const useTaskStore = defineStore('tasks', () => {
     })
   }
 
-  // Przypisanie osoby: todo → doing wraz z datą startu (wymaganie wprost).
   async function assignUser(taskId: number, userId: number): Promise<void> {
     const task = tasks.value.find((item) => item.id === taskId)
 
@@ -108,8 +104,6 @@ export const useTaskStore = defineStore('tasks', () => {
       recipientId: userId,
     })
 
-    // Kopia do właściciela historyjki — bez niej przypisanie byłoby niewidoczne dla nikogo
-    // poza wykonawcą. Przy przypisaniu do samego siebie wystarczy jedno powiadomienie.
     await notifyStoryOwner(
       task.storyId,
       {
@@ -121,7 +115,6 @@ export const useTaskStore = defineStore('tasks', () => {
     )
   }
 
-  // Odpięcie osoby cofa zadanie do todo — stan doing wymaga przypisanego użytkownika.
   async function unassignUser(taskId: number): Promise<void> {
     const task = tasks.value.find((item) => item.id === taskId)
 
@@ -143,7 +136,6 @@ export const useTaskStore = defineStore('tasks', () => {
     const now = new Date().toISOString()
 
     if (stan === 'todo') {
-      // Powrót na początek czyści wszystko, co dokłada automatyka.
       await editTask({ ...task, stan, assigneeId: null, startDate: null, endDate: null })
       await reopenStoryIfDone(task.storyId)
       return
@@ -172,7 +164,6 @@ export const useTaskStore = defineStore('tasks', () => {
     })
   }
 
-  // Kasowanie sekwencyjne — równoległe usuwanie nadpisywałoby sobie zapisy w storage.
   async function removeTasksOfStory(storyId: number): Promise<void> {
     const all = await taskApi.getAll()
 
@@ -187,7 +178,6 @@ export const useTaskStore = defineStore('tasks', () => {
     return tasks.value.filter((task) => task.storyId === storyId)
   }
 
-  // Zrealizowane roboczogodziny liczone z dat: start → koniec, dla trwających start → teraz.
   function workedHours(task: Task): number | null {
     if (!task.startDate) return null
 
@@ -201,8 +191,6 @@ export const useTaskStore = defineStore('tasks', () => {
     return storyStore.stories.find((item) => item.id === storyId)?.storyName ?? '—'
   }
 
-  // Cztery z pięciu powiadomień idą do właściciela historyjki, więc adresowanie siedzi
-  // w jednym miejscu. notificationStore wołany dopiero tutaj — kierunek importów.
   async function notifyStoryOwner(
     storyId: number,
     draft: Omit<NotificationDraft, 'recipientId'>,
@@ -221,7 +209,6 @@ export const useTaskStore = defineStore('tasks', () => {
     if (story?.stan === 'todo') await storyStore.changeState(storyId, 'doing')
   }
 
-  // Historyjka bez zadań nigdy nie domyka się automatycznie — tylko ręcznie w StoryForm.
   async function closeStoryIfAllTasksDone(storyId: number): Promise<void> {
     const story = storyStore.stories.find((item) => item.id === storyId)
     const storyTasks = tasksOfStory(storyId)

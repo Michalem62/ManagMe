@@ -10,9 +10,6 @@ const userStore = useUserStore()
 const projectStore = useProjectStore()
 const notificationStore = useNotificationStore()
 
-// Nagłówek siedzi w app shellu, więc to on ładuje listę projektów i przywraca aktywny.
-// Widoki nie powtarzają już tego u siebie. Powiadomienia dochodzą tu z tego samego powodu —
-// licznik musi znać stan od pierwszej klatki.
 onMounted(async () => {
   await projectStore.fetchProjects()
   await projectStore.loadActiveProject()

@@ -26,8 +26,6 @@ export const useProjectStore = defineStore('projects', () => {
     await projectApi.create(projectData)
     await fetchProjects()
 
-    // Wymaganie mówi „otrzymuje każdy admin", więc lecimy po wszystkich adminach —
-    // dziś to jedna osoba, ale pętla nie kłamie o intencji.
     const notificationStore = useNotificationStore()
     const admins = useUserStore().users.filter((user) => user.role === 'admin')
 
@@ -47,11 +45,9 @@ export const useProjectStore = defineStore('projects', () => {
   }
 
   async function removeProject(id: number): Promise<void> {
-    // storyStore woływany dopiero tutaj, a nie w setupie — inaczej import krążyłby w kółko
     await useStoryStore().removeStoriesOfProject(id)
     await projectApi.delete(id)
 
-    // bez tego w storage zostałoby id nieistniejącego projektu
     if (activeProjectId.value === id) await clearActiveProject()
 
     await fetchProjects()

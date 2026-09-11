@@ -2,7 +2,6 @@
 import type { Project } from '@/types/Project'
 import ProjectCard from './ProjectCard.vue'
 
-//ProjectsView.vue musi przekazać tablice projektów. Tak właśnie działa props
 defineProps<{
   projects: Project[]
 }>()

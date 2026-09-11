@@ -2,7 +2,6 @@
 import { ref, watch } from 'vue'
 import type { Stories, StoryFormData } from '@/types/Stories'
 
-// Brak propa story = tryb dodawania, prop story = tryb edycji.
 const props = defineProps<{
   story?: Stories | null
 }>()
@@ -23,7 +22,6 @@ function emptyForm(): StoryFormData {
 
 const data = ref<StoryFormData>(emptyForm())
 
-// Kliknięcie "Edit" na innej karcie musi przeładować formularz danymi tej historyjki.
 watch(
   () => props.story,
   (story) => {

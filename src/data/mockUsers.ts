@@ -1,7 +1,5 @@
 import type { User } from '@/types/User'
 
-// Użytkowników nikt w aplikacji nie tworzy ani nie edytuje — to mock zamiast systemu
-// logowania, więc lista jest stałą w kodzie, nie kolekcją w storage.
 const admin: User = { id: 1, userName: 'Michal', userSurname: 'Slowiak', role: 'admin' }
 
 export const mockUsers: User[] = [
@@ -11,5 +9,4 @@ export const mockUsers: User[] = [
   { id: 4, userName: 'Katarzyna', userSurname: 'Wisniewska', role: 'developer' },
 ]
 
-// Zalogowany jest admin — wymaganie wprost.
 export const loggedUser = admin
